@@ -40,7 +40,7 @@ Numbers may be `int`, `str` such as `"3/2"`, `Fraction`, or `float`. Floats are 
 
 ## Complexity
 
-In the worst case, backtracking explores exponentially many branches. The method guarantees correctness and a checkable proof for every certified answer, not speed.
+No polynomial bound on the running time is proved; the search can backtrack at every level. The method guarantees correctness and a checkable proof for every certified answer, not speed.
 
 ## Tests
 

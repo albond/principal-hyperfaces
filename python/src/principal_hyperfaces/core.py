@@ -7,8 +7,9 @@ The problem is
 solved in exact rational arithmetic (``fractions.Fraction``).
 
 This module mirrors the algorithm ``PotapovSat.LP.Problem.solve`` that is formally
-verified in Lean 4 (``lean/PotapovSat/LP/Solver.lean``). For every input, the two
-implementations make the same choices in the same order and return the same answer.
+verified in Lean 4 (``lean/PotapovSat/LP/Solver.lean``): the same ordering of constraints,
+the same pivot rule (first largest ``|A[k][j]|``), the same certificate assembly and the same
+repair step. The tests check that both give the same results on the worked examples.
 
 The method of principal hyperfaces is due to G. G. Potapov and I. Yu. Grishin (2007).
 The certified variant with backtracking is described in the accompanying paper.

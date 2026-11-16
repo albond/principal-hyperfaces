@@ -30,9 +30,9 @@ Main results:
 * `Problem.Certified.isOptimal`: a certified answer is optimal, independently of how it
   was found.
 
-The worst case is exponential, as for any exhaustive search. The selection rule and the
-certificate check make the first branch succeed on well-posed instances (see
-`PotapovSat.LP.Examples.SolverDemo`).
+No polynomial bound on the running time is proved: a call with `n ≥ 1` variables and `m`
+constraints makes at most `2m` recursive calls. `PotapovSat.LP.Examples.SolverDemo` shows
+the results on two examples.
 -/
 
 namespace PotapovSat.LP

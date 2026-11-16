@@ -1,4 +1,5 @@
 # Principal Hyperface Method
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24283337.svg)](https://doi.org/10.5281/zenodo.24283337)
 [![Lean 4](https://img.shields.io/badge/Lean_4-verified-blue.svg)](lean/)
 [![Python](https://img.shields.io/badge/Python-%E2%89%A53.10-blue.svg)](python/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -19,7 +20,7 @@ This is the Potapov–Grishin method (2007), completed, certified and machine-ch
 * **Exact where it can be.** In the plane the projection rule **never errs**. In three dimensions it can, and a machine-checked counterexample shows how.
 * **Always correct.** The *certified* method follows the same rule, checks a dual certificate after every step, and backtracks when the check fails. It always finds an optimum when one exists, and each answer comes with a certificate you can check by hand.
 * **Machine-checked to the bottom.** About 1,600 lines of Lean 4 and Mathlib, with no `sorry` and only the three standard axioms. Even Farkas' lemma is proved from scratch, over any ordered field.
-* **Exact arithmetic.** The Python package uses fractions and makes the same choices as the verified Lean solver, so there is no rounding.
+* **Exact arithmetic.** The Python package uses fractions and follows the same rules as the verified Lean solver, so there is no rounding.
 
 ---
 
@@ -100,11 +101,12 @@ cd paper && pdflatex main.tex && pdflatex main.tex   # Creates: paper/main.pdf
 
 ## Limits
 
-In the worst case the certified method explores exponentially many branches, so it is not a polynomial-time algorithm. Polynomial algorithms for linear programming are classical (Khachiyan 1979, Karmarkar 1984). What this method offers is a guaranteed correct answer and a checkable proof for every certified result, built on a picture you can draw by hand.
+No polynomial bound on the running time is proved, and the search can backtrack at every level. Polynomial algorithms for linear programming are classical (Khachiyan 1979, Karmarkar 1984). What this method offers is a guaranteed correct answer and a checkable proof for every certified result, built on a picture you can draw by hand.
 
 ## The paper
 
 [*The Potapov–Grishin Principal Hyperface Method, Completed and Machine-Checked*](paper/main.pdf) (10 pages). It has full statements, proof sketches and the mapping to Lean.
+Archived on Zenodo: [doi.org/10.5281/zenodo.24283337](https://doi.org/10.5281/zenodo.24283337).
 
 ## 🙌 Like the project?
 

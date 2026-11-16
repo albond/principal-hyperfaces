@@ -49,7 +49,8 @@
 \large Correctness, existence of principal hyperfaces, an exact selection rule in the plane,\\
 and a certified algorithm for linear programming verified in Lean~4}
 \author{O.~Bodnar\\[2pt]\small Independent Researcher\\
-\small ORCID: \href{https://orcid.org/0009-0007-9716-1853}{0009-0007-9716-1853}}
+\small ORCID: \href{https://orcid.org/0009-0007-9716-1853}{0009-0007-9716-1853}\\
+\small DOI: \href{https://doi.org/10.5281/zenodo.24283337}{10.5281/zenodo.24283337}}
 \date{2026}
 
 \begin{document}
@@ -86,12 +87,12 @@ Fourier--Motzkin elimination; certified algorithms; formal verification; Lean~4.
 \section{Introduction}\label{sec:intro}
 
 A linear program asks for the largest value of a linear function $c\cdot x$ over a convex
-polyhedron $P=\{x : a_i\cdot x\le b_i\}$. The optimum, when it exists, sits on the boundary of
-$P$, where some of the inequalities hold with equality. The simplex method of
-Dantzig~\cite{dantzig1963} walks along the edges of $P$ from vertex to vertex. Its worst case
-is exponential~\cite{kleeminty1972}, and the first polynomial algorithms, the ellipsoid
-method~\cite{khachiyan1979} and interior-point methods~\cite{karmarkar1984}, look nothing like
-the geometry of the problem.
+polyhedron $P=\{x : a_i\cdot x\le b_i\}$. If $c\ne0$, every optimal point lies on the boundary
+of $P$, where at least one of the inequalities holds with equality. The simplex method of
+Dantzig~\cite{dantzig1963} walks along the edges of $P$ from vertex to vertex; with Dantzig's
+pivoting rule its worst case is exponential~\cite{kleeminty1972}. The polynomial-time algorithms
+of Khachiyan~\cite{khachiyan1979} (the ellipsoid method) and Karmarkar~\cite{karmarkar1984} (an
+interior-point method) rest on different principles.
 
 G.\,G.~Potapov and I.\,Yu.~Grishin proposed a different geometric idea in
 2007~\cite{potapov2007dep,grishin2007visnyk,grishin2007riga}, developed in
@@ -121,8 +122,8 @@ system, and back substitution gives the answer. The faces chosen along the way a
 \end{figure}
 
 The published method left two questions open. First, the selection rule is a heuristic, and
-Grishin~\cite{grishin2008} notes that it may, ``with a certain probability'', pick a wrong face
-and produce only a quasi-optimal point. When exactly is the method right? Second, the method
+Grishin~\cite{grishin2008} notes that it may, with some probability, pick a wrong face and
+produce only a quasi-optimal point. When exactly is the method right? Second, the method
 assumes that the object it looks for, a face containing the optimum, can always be found.
 Can it?
 
@@ -145,9 +146,9 @@ Can it?
   \cite{grishin2008} is confirmed exactly (\cref{sec:examples}).
 \end{enumerate}
 
-We make no claim about worst-case speed. In the worst case the certified algorithm explores
-exponentially many branches, as any exhaustive search may. Its value is a guarantee of
-correctness together with a checkable proof for every answer.
+We make no claim about worst-case speed: we prove no polynomial bound for the certified
+algorithm (\cref{rem:complexity}). Its value is a guarantee of correctness together with a
+checkable proof for every certified answer.
 
 % =====================================================================
 \section{Setting and notation}\label{sec:setting}
@@ -252,9 +253,9 @@ geometry of elimination is always sound, and only the choice of faces matters.
 \section{Principal hyperfaces always exist}\label{sec:existence}
 
 The method searches for principal hyperfaces. We now show that the search target exists. The
-key tool is Farkas' lemma. The version of Mathlib used here provides it only in a topological
-form for real inner-product spaces, so we prove the finite, algebraic form over an arbitrary
-ordered field.
+key tool is Farkas' lemma. Mathlib provides Farkas-type results in a topological setting (closed
+convex cones); the finite, algebraic form over an arbitrary ordered field that we need is not
+there, so we prove it.
 
 \begin{theorem}[Farkas' lemma over an ordered field]\label{thm:farkas}
 A finite system $a_i\cdot x\le b_i$ over $\K$ either has a solution, or there are multipliers
@@ -295,7 +296,7 @@ $a_i$ were zero, $c$ would be zero.
 % =====================================================================
 \section{How good is the selection rule?}\label{sec:rule}
 
-At an optimal vertex, $c$ lies in the cone spanned by the active normals (\cref{thm:kkt}). The
+At an optimal point, $c$ lies in the cone spanned by the active normals (\cref{thm:kkt}). The
 selection rule bets that the normal closest in angle to $c$ is one of them. The following
 lemma makes the method's assumption ``no superfluous constraints''~\cite{grishin2008} precise
 and says what non-redundancy rules out.
@@ -311,13 +312,15 @@ then $k$ is active at every optimal point. In particular, $k$ is principal.
 \end{theorem}
 
 \begin{proof}[Proof sketch]
-Write $p(v)=c\cdot v$ and $q(v)=c\times v$, the planar cross product. By \cref{thm:kkt},
-$\sum y_i q(a_i)=0$ and $\sum y_ip(a_i)=\|c\|^2>0$ over the active normals. In these coordinates
-the rule says $|q(a_k)|/p(a_k)<|q(a_i)|/p(a_i)$ for every active $a_i$ with $p(a_i)>0$, so $a_k$
-makes a strictly smaller angle with $c$. If $q(a_k)\ge0$, some active $a_{i_2}$ lies strictly
-on the same side of $c$ and beyond $a_k$, so $a_k$ is a non-negative combination of $c$ and
-$a_{i_2}$, hence of active normals. If $k$ were inactive, \cref{lem:cone} would make it
-redundant. The case $q(a_k)<0$ is symmetric. See \cref{fig:rule}(a).
+Suppose $k$ is inactive at an optimal point $x$. Write $p(v)=c\cdot v$ and $q(v)=c\times v$,
+the planar cross product. By \cref{thm:kkt}, $c=\sum_i y_ia_i$ with $y\ge0$ supported on
+constraints active at $x$, so $y_k=0$, $\sum_i y_i q(a_i)=0$ and $\sum_i y_ip(a_i)=\|c\|^2>0$.
+In these coordinates the rule says $|q(a_k)|/p(a_k)<|q(a_i)|/p(a_i)$ for every $i\ne k$ with
+$p(a_i)>0$, so $a_k$ makes a strictly smaller angle with $c$ than every such active normal.
+If $q(a_k)\ge0$, these facts give an index $i_2$ with $y_{i_2}>0$, $q(a_{i_2})>0$ and
+$a_k\times a_{i_2}>0$; then $a_k$ is a non-negative combination of $c$ and $a_{i_2}$, hence of
+normals of constraints other than $k$ that are active at $x$. By \cref{lem:cone}, $k$ is
+redundant, a contradiction. The case $q(a_k)<0$ is symmetric. See \cref{fig:rule}(a).
 \end{proof}
 
 \begin{proposition}[The rule can fail in three dimensions]\label{prop:counter}
@@ -337,7 +340,7 @@ So any run that starts with $L_4$ returns a non-optimal point.
   \includegraphics[width=0.94\linewidth]{figures/fig3_selection_rule.pdf}
   \caption{Why the projection rule is exact in the plane and not beyond. (a)~In dimension two,
   a normal $a_k$ that makes a smaller angle with $c$ than every active normal lies inside their
-  cone; by \cref{lem:cone} it must be active. (b)~In dimension three (\cref{prop:counter}),
+  cone; when no constraint is redundant, \cref{lem:cone} forces $k$ to be active. (b)~In dimension three (\cref{prop:counter}),
   normals are shown by their intersection with the plane at height one above $c=(0,0,1)$. The
   active normals $a_1,a_2,a_3$ span the shaded triangle. The dashed disc contains the normals
   with a larger projection than $a_1$. The normal $a_4$ is inside the disc but outside the
@@ -360,8 +363,9 @@ So any run that starts with $L_4$ returns a non-optimal point.
 \Cref{thm:run,cor:exists} suggest how to complete the method. Keep the projection rule as the
 \emph{order} in which faces are tried. After each step, assemble a certificate of optimality
 from the certificate of the reduced problem, check it, and stop as soon as it holds. When the
-check fails, the chosen face was wrong (or the certificate is not unique), so backtrack to the
-next face. The certificate for the current problem is assembled from the certificate $z'$ of
+check fails, either the chosen face is not principal or the certificate returned for the reduced
+problem does not extend to the current one; in both cases the method backtracks to the next
+face. The certificate for the current problem is assembled from the certificate $z'$ of
 the reduced one by keeping $z'_i$ for $i\ne k$ and setting
 \[
   z_k \;=\; \frac{1}{a_{kj}}\Bigl(c_j-\sum_{i\ne k} z'_i a_{ij}\Bigr).
@@ -377,12 +381,13 @@ the reduced one by keeping $z'_i$ for $i\ne k$ and setting
 \For{each constraint $k$ in this order} \Comment{the selection rule}
   \State $j\gets$ index of the largest $|a_{kj}|$; \textbf{skip} $k$ if $a_{kj}=0$
   \State $(y,z')\gets\textsc{Solve}(\text{reduced problem of }P\text{ by }k,j)$
-  \State $x\gets\mathrm{lift}(y)$;\quad $z\gets$ certificate assembled from $z'$
+  \State $x\gets\mathrm{lift}(y)$;\quad $z\gets$ certificate assembled from $z'$\label{line:lift}
   \If{$x$ feasible, $z\ge0$, $\sum_i z_ia_i=c$, $c\cdot x=z\cdot b$}\label{line:check}
     \State \Return $(x,z)$ \Comment{certified optimal}
   \EndIf
 \EndFor
-\State \Return the feasible candidate with the largest objective \Comment{repair}
+\State \Return the candidate with the largest objective, among the origin (if feasible)
+\Statex \hspace{\algorithmicindent}and all lifted points $x$ of line~\ref{line:lift} \Comment{repair}
 \end{algorithmic}
 \end{algorithm}
 
@@ -399,20 +404,23 @@ For every linear program over an ordered field, \cref{alg:certified} terminates,
 \begin{proof}[Proof sketch]
 Termination is structural: recursion is on the number of variables, and each level considers
 finitely many constraints. Part (a) follows from \cref{thm:step}(a). For (b), suppose an optimum
-exists. If no certificate succeeds, the algorithm returns the best of all candidates. By
-\cref{cor:exists} (or, when $c=0$, by moving to the boundary along a non-zero normal) some
-principal face with a non-zero pivot is among them; by induction its branch returns an optimal
-point of the reduced problem, which lifts to an optimal point (\cref{thm:step}(b)). Part (c) is
-weak duality.
+exists. If no certificate succeeds, the algorithm returns the best of all candidates, and every
+candidate is feasible by (a); so it suffices that some candidate is optimal. If every constraint
+row is zero, the origin is feasible and, by \cref{thm:kkt}, $c=0$, so the origin is an optimal
+candidate. Otherwise some principal face has a non-zero pivot: by \cref{cor:exists} if $c\ne0$,
+and if $c=0$ by moving from a feasible point along a non-zero row $a_{k_0}$ until the first
+constraint becomes tight. The reduced problem of that face has an optimal point
+(\cref{thm:step}(b)), so by induction its branch returns one, and it lifts to an optimal point of
+the current problem (\cref{thm:step}(b)). Part (c) is weak duality.
 \end{proof}
 
-\begin{remark}[Complexity]
-In the worst case the backtracking explores exponentially many branches, so
-\cref{alg:certified} is not a polynomial-time algorithm, and we do not claim otherwise.
-Polynomial algorithms for linear programming are classical~\cite{khachiyan1979,karmarkar1984}.
+\begin{remark}[Complexity]\label{rem:complexity}
+A call on a problem with $n\ge1$ variables and $m$ constraints makes at most $2m$ recursive
+calls ($m$ in the loop and $m$ more in the repair step), so a run makes at most
+$\sum_{d=0}^{n}(2m)^d$ calls in total. We prove no polynomial bound and do not claim one;
+polynomial algorithms for linear programming are classical~\cite{khachiyan1979,karmarkar1984}.
 The contribution here is different: the original geometric method, completed so that it is
-always correct and every certified answer carries an independently checkable proof. On the
-examples below, the first branch is accepted (\cref{sec:examples}).
+always correct, with an independently checkable proof for every certified answer.
 \end{remark}
 
 % =====================================================================
@@ -435,14 +443,18 @@ exactly optimal, with the certificate
   \qquad y\cdot b = \tfrac{1008}{5}=201.6,
 \]
 that every hyperface chosen in the paper is principal, and that the first choice $L_3$ has the
-largest projection $29/\sqrt5$. \Cref{alg:certified} returns the same point and the same
-certificate on its first branch.
+largest projection $29/\sqrt5$. \Cref{alg:certified} returns the same point with the same
+certificate $y$. At the top level it accepts the branch it tries first, $L_3$, and overall it
+selects the same six hyperfaces as the paper, in the order $L_3, L_6, L_{12}, L_2, L_8, L_4$.
+Inside the reduced problems it does backtrack: the whole search makes $10{,}013$ recursive calls (counted with the
+Python implementation of \cref{sec:python}).
 
 \paragraph{The counterexample.} On the problem of \cref{prop:counter}, the projection rule
-orders the constraints $L_4, L_1, L_2, L_3, L_5$. The single-pass method commits to $L_4$ and
-fails. \Cref{alg:certified} also tries $L_4$ first, rejects it because the assembled certificate
-is not valid, backtracks, and returns the origin with the certificate
-$y=(\tfrac12,\tfrac14,\tfrac14,0,0)$.
+orders the constraints $L_4, L_1, L_2, L_3, L_5$. By \cref{prop:counter}, any run that starts
+with $L_4$ returns a non-optimal point. \Cref{alg:certified} also tries $L_4$ first; the branch
+cannot pass the certificate check, because a certified point is optimal
+(\cref{thm:certified}(c)). The algorithm backtracks, selects $L_1, L_2, L_3$, and returns the
+origin with the certificate $y=(\tfrac12,\tfrac14,\tfrac14,0,0)$, after $14$ recursive calls (counted with the same implementation).
 
 % =====================================================================
 \section{Formal verification in Lean 4}\label{sec:lean}
@@ -489,7 +501,7 @@ cd lean && lake exe cache get && lake build
 \section{Python implementation}\label{sec:python}
 
 The package \texttt{principal-hyperfaces} implements \cref{alg:certified} in exact rational
-arithmetic and makes the same choices as the Lean function. Its test suite checks the two
+arithmetic and follows the same ordering, pivot and certificate rules as the Lean function. Its test suite checks the two
 examples of \cref{sec:examples} against the values verified in Lean, and checks 60 random bounded
 problems against exhaustive vertex enumeration.
 
@@ -501,8 +513,9 @@ lp = LinearProgram.create(
     A=[[1, 1], [1, 3], [2, -1], [-1, 0], [0, -1]],
     b=[4, 7, 6, 0, 0])
 sol = solve(lp)
-print(sol.x, sol.value, sol.certified)   # (10/3, 2/3)  34/3  True
-print(sol.dual)                          # (7/3, 0, 1/3, 0, 0)
+print(sol.value, sol.certified)          # 34/3 True
+print([str(v) for v in sol.x])           # ['10/3', '2/3']
+print([str(v) for v in sol.dual])        # ['7/3', '0', '1/3', '0', '0']
 \end{lstlisting}
 
 % =====================================================================
