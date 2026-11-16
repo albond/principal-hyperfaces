@@ -52,6 +52,12 @@ def arrow(ax, p, q, color, lw=1.6, ms=11, z=5):
                                  color=color, lw=lw, zorder=z, shrinkA=0, shrinkB=0))
 
 
+def save(fig, name):
+    """PDF for the paper, PNG for the README; no timestamps, so rebuilds are byte-stable."""
+    fig.savefig(OUT / f"{name}.pdf", metadata={"CreationDate": None})
+    fig.savefig(OUT / f"{name}.png", dpi=200, facecolor="white", metadata={"Software": None})
+
+
 def clean(ax):
     ax.set_aspect("equal")
     for s in ax.spines.values():
@@ -128,7 +134,7 @@ def figure_geometry():
     ax.set_xlim(-1.0, 5.6)
     ax.set_ylim(-0.75, 3.2)
     clean(ax)
-    fig.savefig(OUT / "fig1_geometry.pdf")
+    save(fig, "fig1_geometry")
     plt.close(fig)
 
 
@@ -162,7 +168,7 @@ def figure_reduction():
     ax2.set_xlim(2.1, 3.8)
     ax2.set_ylim(-0.75, 0.55)
     ax2.axis("off")
-    fig.savefig(OUT / "fig2_reduction.pdf")
+    save(fig, "fig2_reduction")
     plt.close(fig)
 
 
@@ -210,7 +216,7 @@ def figure_selection_rule():
     ax2.set_xlim(-1.45, 1.45)
     ax2.set_ylim(-1.85, 1.35)
     clean(ax2)
-    fig.savefig(OUT / "fig3_selection_rule.pdf")
+    save(fig, "fig3_selection_rule")
     plt.close(fig)
 
 
@@ -296,7 +302,7 @@ def figure_counterexample():
     ax.text(p4[0] + 0.4, p4[1] + 2.6, p4[2] + 3.6, "$a_4$", fontsize=11, color=INK)
     ax.view_init(elev=18, azim=-58)
     ax.set_box_aspect((1, 1, 0.75))
-    fig.savefig(OUT / "fig4_counterexample.pdf")
+    save(fig, "fig4_counterexample")
     plt.close(fig)
 
 
