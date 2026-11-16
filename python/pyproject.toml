@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "principal-hyperfaces"
+version = "1.0.0"
+description = "Certified principal hyperface method (Potapov–Grishin) for linear programming, in exact arithmetic, verified in Lean 4"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "albond" }]
+keywords = ["linear programming", "principal hyperfaces", "certified algorithms", "Lean 4", "formal verification"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Mathematics",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
